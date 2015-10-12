@@ -32,6 +32,7 @@ public class Target : MonoBehaviour {
 	float m_currentHunger = 0f;
 	public float CurrentHunger {
 		get { return m_currentHunger; }
+		set { m_currentHunger = Mathf.Clamp(value, 0f, maxHunger); }
 	}
 
 	void Update() {
@@ -52,7 +53,7 @@ public class Target : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {
-		if (col.collider.tag == "Bullet") {
+		if (col.collider.tag == "Food") {
 			if (state == TargetState.Hungry) {
 				m_currentHunger -= foodHungerReduction;
 			}

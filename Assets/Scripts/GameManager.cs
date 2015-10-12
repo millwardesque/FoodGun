@@ -13,11 +13,15 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	void Start() {
+		RandomizeTargetsHunger();
+	}
+
 	/// <summary>
 	/// Called whenever a target reaches the Full state.
 	/// </summary>
 	public void OnTargetFull() {
-		Target[] targets = GameObject.FindObjectsOfType<Target>();
+		Target[] targets = GetTargets();
 
 		bool areAllFull = true;
 		for (int i = 0; i < targets.Length; ++i) {
@@ -37,6 +41,17 @@ public class GameManager : MonoBehaviour {
 	/// </summary>
 	public void OnOutOfTime() {
 		PlayerLoses();
+	}
+
+	Target[] GetTargets() {
+		 return GameObject.FindObjectsOfType<Target>();
+	}
+
+	void RandomizeTargetsHunger() {
+		Target[] targets = GetTargets();
+		for (int i = 0; i < targets.Length; ++i) {
+			targets[i].CurrentHunger = Random.Range(1f, targets[i].maxHunger);
+		}
 	}
 
 	void PlayerWins() {
