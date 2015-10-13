@@ -39,8 +39,8 @@ public class UITimer : MonoBehaviour {
 			timerLabel.text = string.Format("Time Remaining: {0}", Mathf.RoundToInt(timeRemaining));
 
 			if (timeRemaining < 0f) {
-				GameManager.Instance.OnOutOfTime();
 				state = TimerState.Stopped;
+				GameManager.Instance.OnOutOfTime();
 			}
 		}
 	}

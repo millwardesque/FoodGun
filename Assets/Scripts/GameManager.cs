@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour {
 	void RandomizeTargetsHunger() {
 		Target[] targets = GetTargets();
 		for (int i = 0; i < targets.Length; ++i) {
+			targets[i].state = TargetState.Hungry;
 			targets[i].CurrentHunger = Random.Range(1f, targets[i].maxHunger);
 		}
 	}
@@ -83,10 +84,12 @@ public class GameManager : MonoBehaviour {
 	void PlayerWins() {
 		youWinContainer.SetActive(true);
 		Time.timeScale = 0f;
+		timer.state = TimerState.Stopped;
 	}
 
 	void PlayerLoses() {
 		youLoseContainer.SetActive(true);
 		Time.timeScale = 0f;
+		timer.state = TimerState.Stopped;
 	}
 }
