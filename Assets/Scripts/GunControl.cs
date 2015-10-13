@@ -2,8 +2,10 @@
 using System.Collections;
 
 public class GunControl : MonoBehaviour {
-	public GameObject bulletPrefab;
+	public Food currentFood;
 	public GameObject[] targets;
+	public Food cowFoodPrefab;
+	public Food horseFoodPrefab;
 	private GameObject currentTarget = null;
 
 	// Use this for initialization
@@ -11,15 +13,17 @@ public class GunControl : MonoBehaviour {
 		if (targets.Length > 0) {
 			currentTarget = targets[0];
 		}
+
+		currentFood = cowFoodPrefab;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.Space)) {
-			GameObject bullet = Instantiate<GameObject>(bulletPrefab);
-			bullet.transform.position = transform.position;
+			Food foodBullet = Instantiate<Food>(currentFood);
+			foodBullet.transform.position = transform.position;
 			Vector3 direction = (currentTarget.transform.position - transform.position).normalized;
-			bullet.GetComponent<Rigidbody2D>().AddForce(direction * 10f, ForceMode2D.Impulse);
+			foodBullet.GetComponent<Rigidbody2D>().AddForce(direction * 10f, ForceMode2D.Impulse);
 		}
 
 		if (Input.GetKeyDown (KeyCode.Alpha1)) {
@@ -37,11 +41,26 @@ public class GunControl : MonoBehaviour {
 		else if (Input.GetKeyDown (KeyCode.Alpha5)) {
 			ChangeTarget(4);
 		}
+
+		if (Input.GetKeyDown (KeyCode.Q)) {
+			SelectCowFood();
+		}
+		else if (Input.GetKeyDown (KeyCode.W)) {
+			SelectHorseFood();
+		}
 	}
 
 	public void ChangeTarget(int index) {
 		if (targets.Length > index) {
 			currentTarget = targets[index];
 		}
+	}
+
+	public void SelectCowFood() {
+		currentFood = cowFoodPrefab;
+	}
+
+	public void SelectHorseFood() {
+		currentFood = horseFoodPrefab;
 	}
 }

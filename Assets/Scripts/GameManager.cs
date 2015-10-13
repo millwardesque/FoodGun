@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance = null;
 	public GameObject youWinContainer;
 	public GameObject youLoseContainer;
+	public GameObject foodOptionContainer;
 	public UITimer timer;
 
 	void Awake() {
@@ -54,8 +55,9 @@ public class GameManager : MonoBehaviour {
 	void StartNewGame() {
 		youWinContainer.SetActive(false);
 		youLoseContainer.SetActive(false);
+		foodOptionContainer.SetActive(true);
 
-		RandomizeTargetsHunger();
+		RandomizeTargets();
 		Time.timeScale = 1f;
 		timer.state = TimerState.Started;
 
@@ -66,7 +68,7 @@ public class GameManager : MonoBehaviour {
 		 return GameObject.FindObjectsOfType<Target>();
 	}
 
-	void RandomizeTargetsHunger() {
+	void RandomizeTargets() {
 		Target[] targets = GetTargets();
 		for (int i = 0; i < targets.Length; ++i) {
 			targets[i].state = TargetState.Hungry;
@@ -83,12 +85,14 @@ public class GameManager : MonoBehaviour {
 
 	void PlayerWins() {
 		youWinContainer.SetActive(true);
+		foodOptionContainer.SetActive(false);
 		Time.timeScale = 0f;
 		timer.state = TimerState.Stopped;
 	}
 
 	void PlayerLoses() {
 		youLoseContainer.SetActive(true);
+		foodOptionContainer.SetActive(false);
 		Time.timeScale = 0f;
 		timer.state = TimerState.Stopped;
 	}

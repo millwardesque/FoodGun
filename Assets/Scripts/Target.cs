@@ -12,6 +12,7 @@ public class Target : MonoBehaviour {
 	public float foodHungerReduction = 5f;	// Amount of hunger that food reduces
 	public float fullDuration = 5f;			// Time for which the target stays full.
 	public float currentFullDuration = 0f;	// Time remaining during which the target stays full.
+	public FoodType foodType = FoodType.Cow;	// Type of food this animal eats
 
 	TargetState m_state = TargetState.Hungry;
 	public TargetState state {
@@ -53,9 +54,15 @@ public class Target : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D col) {
-		if (col.collider.tag == "Food") {
+		Food colliderFood = col.collider.GetComponent<Food>();
+		if (colliderFood != null) {
 			if (state == TargetState.Hungry) {
-				m_currentHunger -= foodHungerReduction;
+				if (colliderFood.type == foodType) {
+					m_currentHunger -= foodHungerReduction;
+				}
+				else {
+					m_currentHunger += foodHungerReduction;
+				}
 			}
 
 			Destroy (col.collider.gameObject);
