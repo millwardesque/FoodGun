@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
 	public static GameManager Instance = null;
+	public GameObject youWinContainer;
+	public GameObject youLoseContainer;
+	public UITimer timer;
 
 	void Awake() {
 		if (null == Instance) {
@@ -14,7 +18,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void Start() {
-		RandomizeTargetsHunger();
+		StartNewGame();
 	}
 
 	/// <summary>
@@ -43,6 +47,21 @@ public class GameManager : MonoBehaviour {
 		PlayerLoses();
 	}
 
+	public void OnStartNewGame() {
+		StartNewGame();
+	}
+
+	void StartNewGame() {
+		youWinContainer.SetActive(false);
+		youLoseContainer.SetActive(false);
+
+		RandomizeTargetsHunger();
+		Time.timeScale = 1f;
+		timer.state = TimerState.Started;
+
+		RemoveBullets();
+	}
+
 	Target[] GetTargets() {
 		 return GameObject.FindObjectsOfType<Target>();
 	}
@@ -54,13 +73,20 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	void RemoveBullets() {
+		GameObject[] food = GameObject.FindGameObjectsWithTag("Food");
+		for (int i = 0; i < food.Length; ++i) {
+			GameObject.Destroy(food[i]);
+		}
+	}
+
 	void PlayerWins() {
-		Debug.Log("YOU WIN!");
+		youWinContainer.SetActive(true);
 		Time.timeScale = 0f;
 	}
 
 	void PlayerLoses() {
-		Debug.Log ("YOU LOSE!");
+		youLoseContainer.SetActive(true);
 		Time.timeScale = 0f;
 	}
 }

@@ -13,10 +13,17 @@ public class UITimer : MonoBehaviour {
 	public float gameLength = 60f;
 	float timeRemaining;
 
-	private TimerState m_state;
+	private TimerState m_state = TimerState.Stopped;
 	public TimerState state {
 		get { return m_state; }
-		set { m_state = value; }
+		set {
+			TimerState oldState = m_state;
+			m_state = value;
+
+			if (oldState == TimerState.Stopped && m_state == TimerState.Started) {
+				timeRemaining = gameLength;
+			}
+		}
 	}
 
 	void Start() {
