@@ -3,15 +3,19 @@ using System.Collections;
 
 public class GunControl : MonoBehaviour {
 	public Food currentFood;
-	public GameObject[] targets;
+	public Target[] targets;
 	public Food cowFoodPrefab;
 	public Food horseFoodPrefab;
-	private GameObject currentTarget = null;
+
+	private Target m_currentTarget = null;
+	public Target CurrentTarget {
+		get { return m_currentTarget; }
+	}
 
 	// Use this for initialization
 	void Start () {
 		if (targets.Length > 0) {
-			currentTarget = targets[0];
+			m_currentTarget = targets[0];
 		}
 
 		currentFood = cowFoodPrefab;
@@ -19,13 +23,15 @@ public class GunControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		// Fire food!
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			Food foodBullet = Instantiate<Food>(currentFood);
 			foodBullet.transform.position = transform.position;
-			Vector3 direction = (currentTarget.transform.position - transform.position).normalized;
+			Vector3 direction = (m_currentTarget.transform.position - transform.position).normalized;
 			foodBullet.GetComponent<Rigidbody2D>().AddForce(direction * 10f, ForceMode2D.Impulse);
 		}
 
+		// Target selection
 		if (Input.GetKeyDown (KeyCode.Alpha1)) {
 			ChangeTarget(0);
 		}
@@ -42,6 +48,7 @@ public class GunControl : MonoBehaviour {
 			ChangeTarget(4);
 		}
 
+		// Food controls
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			SelectCowFood();
 		}
@@ -52,7 +59,7 @@ public class GunControl : MonoBehaviour {
 
 	public void ChangeTarget(int index) {
 		if (targets.Length > index) {
-			currentTarget = targets[index];
+			m_currentTarget = targets[index];
 		}
 	}
 

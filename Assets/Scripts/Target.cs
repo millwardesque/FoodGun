@@ -22,7 +22,7 @@ public class Target : MonoBehaviour {
 			m_state = value;
 			if (oldState == TargetState.Hungry && m_state == TargetState.Full) {
 				currentFullDuration = fullDuration;
-				GameManager.Instance.OnTargetFull();
+				GameManager.Instance.OnTargetFull(this);
 			}
 			else if (oldState == TargetState.Full && m_state == TargetState.Hungry) {
 				m_currentHunger = 0f;

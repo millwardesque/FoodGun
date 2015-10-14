@@ -7,7 +7,10 @@ public class GameManager : MonoBehaviour {
 	public GameObject youWinContainer;
 	public GameObject youLoseContainer;
 	public GameObject foodOptionContainer;
+	public GunControl player;
 	public UITimer timer;
+	public UIHungryAnimalsCounter hungryAnimalsCounter;
+	public int startingHungryAnimalCount;
 
 	void Awake() {
 		if (null == Instance) {
@@ -25,18 +28,25 @@ public class GameManager : MonoBehaviour {
 	/// <summary>
 	/// Called whenever a target reaches the Full state.
 	/// </summary>
-	public void OnTargetFull() {
-		Target[] targets = GetTargets();
+	public void OnTargetFull(Target target) {
+		if (hungryAnimalsCounter.HungryAnimals > 0) {
+			hungryAnimalsCounter.HungryAnimals--;
+			Target newTarget = TargetManager.Instance.CreateRandomTarget();
+			newTarget.transform.position = target.transform.position;
+			
+			for (int i = 0; i < player.targets.Length; ++i) {
+				if (target == player.targets[i]) {
+					player.targets[i] = newTarget;
 
-		bool areAllFull = true;
-		for (int i = 0; i < targets.Length; ++i) {
-			if (targets[i].state != TargetState.Full) {
-				areAllFull = false;
-				break;
+					if (target == player.CurrentTarget) {
+						player.ChangeTarget(i);
+					}
+				}
 			}
-		}
 
-		if (areAllFull) {
+			Destroy (target.gameObject);
+		}
+		else {
 			PlayerWins ();
 		}
 	}
@@ -56,6 +66,7 @@ public class GameManager : MonoBehaviour {
 		youWinContainer.SetActive(false);
 		youLoseContainer.SetActive(false);
 		foodOptionContainer.SetActive(true);
+		hungryAnimalsCounter.HungryAnimals = startingHungryAnimalCount;
 
 		RandomizeTargets();
 		Time.timeScale = 1f;
