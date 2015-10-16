@@ -1,20 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GunControl : MonoBehaviour {
 	public Food currentFood;
-	public Target[] targets;
 	public Food cowFoodPrefab;
 	public Food horseFoodPrefab;
+
+	public int numTargets = 5;
+	private Target[] targets;
 
 	private Target m_currentTarget = null;
 	public Target CurrentTarget {
 		get { return m_currentTarget; }
 	}
 
+	void Awake() {
+		targets = new Target[5];
+	}
+
 	// Use this for initialization
 	void Start () {
-		if (targets.Length > 0) {
+		if (targets.Length > 0 && targets[0] != null) {
 			m_currentTarget = targets[0];
 		}
 
@@ -24,7 +31,7 @@ public class GunControl : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		// Fire food!
-		if (Input.GetKeyDown (KeyCode.Space)) {
+		if (Input.GetKeyDown (KeyCode.Space) && CurrentTarget != null) {
 			Food foodBullet = Instantiate<Food>(currentFood);
 			foodBullet.transform.position = transform.position;
 			Vector3 direction = (m_currentTarget.transform.position - transform.position).normalized;
@@ -57,10 +64,31 @@ public class GunControl : MonoBehaviour {
 		}
 	}
 
+	public void ReplaceTarget(int index, Target target) {
+		if (index >= 0 && index < targets.Length) {
+			if (m_currentTarget == targets[index]) {
+				m_currentTarget = target;
+			}
+			targets[index] = target;
+		}
+		else {
+			Debug.LogError(string.Format ("Tried to replace target at invalid index position {0}. Targets array only supports {1} slots", index, targets.Length));
+		}
+	}
+
 	public void ChangeTarget(int index) {
-		if (targets.Length > index) {
+		if (HasTarget (index)) {
 			m_currentTarget = targets[index];
 		}
+	}
+
+	public int FindTargetIndex(Target target) {
+		for (int i = 0; i < targets.Length; ++i) {
+			if (targets[i] == target) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	public void SelectCowFood() {
@@ -69,5 +97,13 @@ public class GunControl : MonoBehaviour {
 
 	public void SelectHorseFood() {
 		currentFood = horseFoodPrefab;
+	}
+
+	public bool HasTarget(int index) {
+		if (targets.Length > index && index >= 0 && targets[index] != null) {
+			return true;
+		}
+
+		return false;
 	}
 }

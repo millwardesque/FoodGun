@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 	public UITimer timer;
 	public UIHungryAnimalsCounter hungryAnimalsCounter;
 	public int startingHungryAnimalCount;
+	private float fieldWidth = 18f;
 
 	void Awake() {
 		if (null == Instance) {
@@ -25,25 +26,37 @@ public class GameManager : MonoBehaviour {
 		StartNewGame();
 	}
 
+	Vector2 CalculateLocalPosition(int index) {
+		float x = (-fieldWidth / 2f) + (index * fieldWidth / player.numTargets);
+		float y = 0f;
+
+		return new Vector2(x, y);
+	}
+
 	/// <summary>
 	/// Called whenever a target reaches the Full state.
 	/// </summary>
 	public void OnTargetFull(Target target) {
+		hungryAnimalsCounter.HungryAnimals--;
 		if (hungryAnimalsCounter.HungryAnimals > 0) {
-			hungryAnimalsCounter.HungryAnimals--;
-			Target newTarget = TargetManager.Instance.CreateRandomTarget();
-			newTarget.transform.position = target.transform.position;
-			
-			for (int i = 0; i < player.targets.Length; ++i) {
-				if (target == player.targets[i]) {
-					player.targets[i] = newTarget;
+			int targetIndex = player.FindTargetIndex(target);
 
-					if (target == player.CurrentTarget) {
-						player.ChangeTarget(i);
-					}
+			if (hungryAnimalsCounter.HungryAnimals >= player.numTargets) {
+				if (targetIndex != -1) {
+					Target newTarget = TargetManager.Instance.CreateRandomTarget(CalculateLocalPosition(targetIndex));
+					player.ReplaceTarget(targetIndex, newTarget);
 				}
 			}
-
+			/*else { // If there aren't any more animals to queue up, move the player to a different target.
+				int i = (targetIndex + 1) % player.numTargets;
+				while (i != targetIndex) {
+					if (player.HasTarget(i)) {
+						player.ChangeTarget(i);
+						break;
+					}
+					i = (i + 1) % player.numTargets;
+				}
+			}*/
 			Destroy (target.gameObject);
 		}
 		else {
@@ -75,15 +88,10 @@ public class GameManager : MonoBehaviour {
 		RemoveBullets();
 	}
 
-	Target[] GetTargets() {
-		 return GameObject.FindObjectsOfType<Target>();
-	}
-
 	void RandomizeTargets() {
-		Target[] targets = GetTargets();
-		for (int i = 0; i < targets.Length; ++i) {
-			targets[i].state = TargetState.Hungry;
-			targets[i].CurrentHunger = Random.Range(1f, targets[i].maxHunger);
+		for (int i = 0; i < player.numTargets; ++i) {
+			Target target = TargetManager.Instance.CreateRandomTarget(CalculateLocalPosition(i));
+			player.ReplaceTarget(i, target);
 		}
 	}
 
