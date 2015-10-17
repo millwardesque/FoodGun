@@ -3,9 +3,10 @@ using System.Collections;
 
 public class TargetManager : MonoBehaviour {
 	public Target[] targetTypes;
+    public TargetSpawnTimer targetSpawnTimerPrefab;
+    public float spawnDelay = 5f;
 
-
-	public static TargetManager Instance = null;
+    public static TargetManager Instance = null;
 
 	void Awake() {
 		if (Instance == null) {
@@ -15,6 +16,15 @@ public class TargetManager : MonoBehaviour {
 			Destroy(gameObject);
 		}
 	}
+
+    public TargetSpawnTimer CreateSpawnTimer(int spawnPosition)
+    {
+        TargetSpawnTimer newTimer = GameObject.Instantiate<TargetSpawnTimer>(targetSpawnTimerPrefab);
+        newTimer.spawnPosition = spawnPosition;
+        newTimer.duration = spawnDelay;
+        newTimer.transform.SetParent(transform);
+        return newTimer;
+    }
 
 	public Target CreateRandomTarget(Vector3 localPosition) {
 		int typeIndex = Random.Range(0, targetTypes.Length);

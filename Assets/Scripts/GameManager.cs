@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
 		StartNewGame();
 	}
 
-	Vector2 CalculateLocalPosition(int index) {
+	public Vector2 CalculateLocalPosition(int index) {
 		float x = (-fieldWidth / 2f) + (index * fieldWidth / player.numTargets);
 		float y = 0f;
 
@@ -38,13 +38,15 @@ public class GameManager : MonoBehaviour {
 	/// </summary>
 	public void OnTargetFull(Target target) {
 		hungryAnimalsCounter.HungryAnimals--;
-		if (hungryAnimalsCounter.HungryAnimals > 0) {
+        Destroy(target.gameObject);
+        if (hungryAnimalsCounter.HungryAnimals > 0) {
 			int targetIndex = player.FindTargetIndex(target);
 
 			if (hungryAnimalsCounter.HungryAnimals >= player.numTargets) {
 				if (targetIndex != -1) {
-					Target newTarget = TargetManager.Instance.CreateRandomTarget(CalculateLocalPosition(targetIndex));
-					player.ReplaceTarget(targetIndex, newTarget);
+                    TargetManager.Instance.CreateSpawnTimer(targetIndex);
+					// Target newTarget = TargetManager.Instance.CreateRandomTarget(CalculateLocalPosition(targetIndex));
+					// player.ReplaceTarget(targetIndex, newTarget);
 				}
 			}
 			/*else { // If there aren't any more animals to queue up, move the player to a different target.
@@ -57,7 +59,7 @@ public class GameManager : MonoBehaviour {
 					i = (i + 1) % player.numTargets;
 				}
 			}*/
-			Destroy (target.gameObject);
+			
 		}
 		else {
 			PlayerWins ();
